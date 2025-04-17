@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Birthday Surprise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="card1">
+        <p>✨</p>
+        <h1>Here's something special for you!</h1>
+      </div>
+
+      <div class="card2">
+        <p>✨</p>
+        <h1>Wanna see what I made?</h1>
+        <button onclick="redirect()">Ohh Yes!</button>
+        <button onclick="redirect()">Definitely Yes!!</button>
+      </div>
+
+      <div class="options_content_wrapper">
+        <div class="card3">
+          <div class="option_card music" onclick="showOption('music')">
+            <i class="fas fa-music music-icon"></i>
+            <p>Play Music</p>
+        </div>
+        <div class="option_card celebrate" onclick="showOption('celebrate')">
+          <i class="fa-solid fa-cake-candles"></i>
+          <p>Celebrate</p>
+        </div>
+          <div class="option_card gallery" onclick="showOption('gallery')">
+            <i class="fa-solid fa-images"></i>
+            <p>Image Gallery</p>
+          </div>
+          <div class="option_card msg" onclick="showOption('message')">
+            <i class="fa-solid fa-envelope-open-text"></i>
+            <p>Special Message</p>
+          </div>
+        </div>
+
+        <div class="content_container">
+          <div id="default_content" class="default_message">
+            <i class="fa-solid fa-hand-point-left fa-2x"></i>
+            <h2>Select an option from the left menu</h2>
+          </div>
+          
+          <!-- Music Options -->
+          <div id="music_content" class="music_option" style="display: none;">
+            <h3>Choose Music <i class="fa-solid fa-headphones"></i></h3>
+            <p>All Dedicated to you!</p>
+            <ul type="none">
+               <!-- jane kyun -->
+              <li class="music_opt" onclick="playSong('/songs/jane kyun.mp3')">For my Bestfriend</li> 
+              <!-- jane na dunga -->
+              <li class="music_opt" onclick="playSong('/songs/jane na dunga.mp3')">For my more than "Bestfriend"</li>
+              <!-- love me thoda aur -->
+              <li class="music_opt" onclick="playSong('/songs/love me thoda aur.mp3')">For My ❤️</li>
+              <!-- pehla pyar -->
+              <li class="music_opt" onclick="playSong('/songs/pehla pyar.mp3')">For an Unforgettable Day</li>
+            </ul>
+            <div id="now_playing" style="margin-top: 3vh; display: none;">
+              <h4>Now Playing: <span id="song_name"></span></h4>
+              <button onclick="stopMusic()" style="background-color: lightcoral; color: white; border: none; padding: 1vh 2vh; border-radius: 5px; cursor: pointer;">
+                  <i class="fa-solid fa-stop"></i> Stop Music
+                </button>
+            </div>
+        </div>
+        
+        <!-- Celebrate Options -->
+        <div id="celebrate_content" class="celebrate_option" style="display: none;">
+          <h2>Happy Birthday Anurag!</h2>
+          <h3>Today is your special day and I hope I make it even more special for you!</h3>
+          <h3>Enjoy and Feel Special!</h3>
+          <!-- Confetti elements will be added by JS -->
+        </div>
+
+          <!-- Gallery Options with Carousel -->
+          <div id="gallery_content" class="gallery_option" style="display: none;">
+            <h3>Memories Gallery <i class="fa-solid fa-camera"></i></h3>
+            <div class="carousel-container">
+              <div class="carousel-slide">
+                <img src="/images/1.jpg" alt="Birthday Memory 1">
+                <img src="/images/3.jpg" alt="Birthday Memory 3">
+                <img src="/images/2.jpg" alt="Birthday Memory 2">
+                <img src="/images/4.jpg" alt="Birthday Memory 4">
+              </div>
+            </div>
+            <div class="carousel-buttons">
+              <button class="carousel-btn" id="prevBtn">
+                <i class="fa-solid fa-chevron-left"></i> Previous
+              </button>
+              <button class="carousel-btn" id="nextBtn">
+                Next <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+            <div class="carousel-indicators" id="indicators"></div>
+          </div>
+          
+          <!-- Message Options -->
+          <div id="message_content" class="message_option" style="display: none;">
+            <h3>A Special Message For You <i class="fa-solid fa-heart"></i></h3>
+            <div class="message_card">
+              <p>Dear Friend,</p>
+              <p>On this special day, I want to wish you the happiest of birthdays! You have been an amazing person in my life, bringing joy, laughter, and warmth to everyone around you.</p>
+              <p>May this year bring you endless opportunities, beautiful moments, and all the happiness you deserve. Thank you for being you!</p>
+              <p>With love and best wishes,</p>
+              <p><strong>Your Friend</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // DOM Elements
+      let card1 = document.querySelector(".card1");
+      let card2 = document.querySelector(".card2");
+      let optionsWrapper = document.querySelector(".options_content_wrapper");
+      let audio = null;
+
+      // Hide elements initially
+      card2.style.display = "none";
+      optionsWrapper.style.display = "none";
+
+      // Show card2 after 3 seconds
+      setTimeout(() => {
+        card1.style.display = "none";
+        card2.style.display = "";
+      }, 3000);
+
+      // Function to show option content
+      function redirect() {
+        card2.style.display = "none";
+        optionsWrapper.style.display = "flex";
+      }
+
+      // Function to show selected option content
+      function showOption(option) {
+        // Hide all content sections first
+        document.getElementById("default_content").style.display = "none";
+        document.getElementById("music_content").style.display = "none";
+        document.getElementById("gallery_content").style.display = "none";
+        document.getElementById("celebrate_content").style.display = "none";
+        document.getElementById("message_content").style.display = "none";
+        
+        // Show the selected content
+        document.getElementById(option + "_content").style.display = "";
+        
+        // Special handling for celebrate option
+        if (option === 'celebrate') {
+          createConfetti();
+        }
+        
+        // Initialize carousel if gallery is selected
+        if (option === 'gallery') {
+          initCarousel();
+        }
+      }
+
+      // Function to play songs
+      function playSong(songPath) {
+        // Stop any currently playing music
+        if (audio) {
+          audio.pause();
+          audio = null;
+        }
+        
+        // Create new audio and play
+        audio = new Audio(songPath);
+        audio.loop = true;
+        audio.play();
+        
+        // Update now playing section
+        document.getElementById("now_playing").style.display = "block";
+        document.getElementById("song_name").textContent = songPath.split('/').pop().replace('.mp3', '').replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      }
+      
+      // Function to stop music
+      function stopMusic() {
+        if (audio) {
+          audio.pause();
+          audio = null;
+          document.getElementById("now_playing").style.display = "none";
+        }
+      }
+      
+      // Function to create confetti for celebration
+      function createConfetti() {
+        const celebrateDiv = document.getElementById("celebrate_content");
+        
+        // Create a container for the text to keep it separate from confetti
+        celebrateDiv.innerHTML = `
+            <div class="celebrate-text">
+            <h2>Happy Birthday Anurag!</h2>
+            <h3>Today is your special day and I hope I make it even more special for you!</h3>
+            <h4>Enjoy and feel Special!!</h4>
+            </div>
+        `;
+
+        // Create confetti container that will be positioned absolutely
+        const confettiContainer = document.createElement('div');
+        confettiContainer.className = 'confetti-container';
+        celebrateDiv.appendChild(confettiContainer);
+        
+        // More varied colors with festive tones
+        const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#ff8484', '#a06cd5', '#7bdff2', '#f7c9c9', '#b8e1ff', '#ffd3b6', '#d4a5ff'];
+        
+        // Different confetti shapes
+        const shapes = ['circle', 'square', 'triangle'];
+        
+        // Create more confetti with varied shapes
+        for (let i = 0; i < 150; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            
+            // Random position
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = Math.random() * 100 + '%';
+            
+            // Random size (slightly larger)
+            const size = Math.random() * 12 + 6 + 'px';
+            confetti.style.width = size;
+            confetti.style.height = size;
+            
+            // Random color
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Random speed and delay
+            confetti.style.animationDuration = Math.random() * 4 + 3 + 's';
+            confetti.style.animationDelay = Math.random() * 5 + 's';
+            
+            // Random rotation
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            
+            // Random shape
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+            if (shape === 'square') {
+            confetti.style.borderRadius = '0';
+            } else if (shape === 'triangle') {
+            confetti.style.borderRadius = '0';
+            confetti.style.background = 'transparent';
+            confetti.style.width = '0';
+            confetti.style.height = '0';
+            confetti.style.borderLeft = size + ' solid transparent';
+            confetti.style.borderRight = size + ' solid transparent';
+            confetti.style.borderBottom = size + ' solid ' + colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            confettiContainer.appendChild(confetti);
+        }
+        }
+      
+      // Carousel functionality
+      function initCarousel() {
+        const carousel = document.querySelector('.carousel-slide');
+        const images = document.querySelectorAll('.carousel-slide img');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indicators = document.getElementById('indicators');
+        
+        // Clear existing indicators
+        indicators.innerHTML = '';
+        
+        // Set up image width for positioning
+        const size = carousel.clientWidth;
+        let counter = 0;
+        
+        // Position all slides side by side
+        carousel.style.transform = 'translateX(0)';
+        
+        // Create indicator dots
+        for (let i = 0; i < images.length; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'carousel-indicator';
+          if (i === 0) dot.classList.add('active');
+          dot.onclick = function() {
+            goToSlide(i);
+          };
+          indicators.appendChild(dot);
+        }
+        
+        // Update the display to show one image at a time
+        images.forEach((img, index) => {
+          img.style.position = 'absolute';
+          img.style.left = `${index * 100}%`;
+        });
+        
+        // Handle button clicks
+        nextBtn.addEventListener('click', () => {
+          if (counter >= images.length - 1) return;
+          counter++;
+          updateCarousel();
+        });
+        
+        prevBtn.addEventListener('click', () => {
+          if (counter <= 0) return;
+          counter--;
+          updateCarousel();
+        });
+        
+        // Function to update carousel position
+        function updateCarousel() {
+          // Update indicators
+          document.querySelectorAll('.carousel-indicator').forEach((dot, index) => {
+            dot.classList.remove('active');
+            if (index === counter) dot.classList.add('active');
+          });
+          
+          // Move the carousel
+          carousel.style.transform = `translateX(-${counter * 100}%)`;
+        }
+        
+        // Function to go to specific slide
+        function goToSlide(slideIndex) {
+          counter = slideIndex;
+          updateCarousel();
+        }
+      }
+    </script>
+  </body>
+</html>
